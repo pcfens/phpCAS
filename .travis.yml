@@ -1,9 +1,30 @@
 language: php
 php:
-  - "5.4"
-  - "5.5"
-  - "5.6"
+- '5.4'
+- '5.5'
+- '5.6'
+services:
+- docker
 script:
-  - cd test
-  - phpunit TestSuite.php
+- cd test
+- phpunit TestSuite.php
+matrix:
+  fast_finish: true
+  include:
+  - stage: GitHub Release
+    php: '7.2'
+    script:
+    - docker run --rm -it -v $PWD:/app centos:centos7 /app/utils/build.sh
+    deploy:
+      provider: releases
+      file_glob: true
+      file: utils/dist/CAS-*.tgz
+      skip_cleanup: true
+      api_key:
+        secure: Vpyk5oAsOLVsKdmeeFbTuBZCTei2X5zZWLZiziETuy/p956/TZ3zTdQpwV4PEkgBnFPGNY3Ma8djGFZQVMVOE1BRvvr9hVgHepcjSUY88qH6jxyCpG2SPJ5SW1+jiwSLimM1by8II4f4tw40nr8ST2bh6iEGBIfO+J0/vPznH6d9RxGQZ9cZyh2w7wTiP6NfVV4Niq+oX0L/SAriaPkufTOz2oSuqBrraJpmgeP6kaxKq6yLaJdB+uRZTh2nLDjrBtmXU0e7UXw2cDLn3qyck++wTALtrKz7Xd53Ifygb/Frl1Bmfnd6uVqrYRTAw8957Ltc6F9Z+qfcu05XCMLAbMz5C4KlsjisSPxtkOPb83g6+3xBWlSazeW/lx45qOzbYXFxB+kcGsyopSKInxgdTR4lIiNk3fmmuhLNEL0BRf0RH9wII66+18JoydNn1zVxIAWeUq413hTg4omOvg6ihMyIqO3ZxLKa8jraNXsxAfUwxskXPiA3oqQLh8+YX1OOPIjtqBexUC3dv/fzHRACHW++u9S/euNHBZFhwQtLTTBXmYhbB6mNXaMd4wqBRtlCIWY8xkmFD4sDdKNeftBLuF0HoLv6cGYqEe9eetaAkGi6u1aPhbr/aeCBKpGQZ57QebZ1/LIjfVOIFfI/Q8A8rJ4pglXvZKnqmg81EA38lN0=
+      on:
+        repo: pcfens/phpCAS
+        tags: true
 sudo: false
+notifications:
+  email: false
